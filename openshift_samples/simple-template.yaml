@@ -1,0 +1,54 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: simple-example-template
+  annotations:
+    description: "example template"
+objects:
+  - kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      name: ${NAME}-configmap
+      labels:
+        app: ${NAME}
+    data:
+      simple-example.crt: |
+        -----BEGIN CERTIFICATE-----
+        MIIDUTCCAjmgAwIBAgIIUeLWUK+zrCUwDQYJKoZIhvcNAQELBQAwNjE0MDIGA1UE
+        Awwrb3BlbnNoaWZ0LXNlcnZpY2Utc2VydmluZy1zaWduZXJAMTYyMjU4MDM1MDAe
+        Fw0yMTA2MDEyMDQ1NDlaFw0yMzA3MzEyMDQ1NTBaMDYxNDAyBgNVBAMMK29wZW5z
+        aGlmdC1zZXJ2aWNlLXNlcnZpbmctc2lnbmVyQDE2MjI1ODAzNTAwggEiMA0GCSqG
+        SIb3DQEBAQUAA4IBDwAwggEKAoIBAQCs09JFiqDay9s1/qYG2dG9jphoXy6YST5t
+        zxQyG3ympM6ovamV15n2VvPb13qgs4CossG77NI92Gzh7SlUlaWZMUUGGon2VmCT
+        wK7sVs4gY1rzofXxLjIol2yvC7+ndJ+BWYavL0CZkJRJzDPn8lEWDZHxn3DNIsaS
+        54Vx/3q54RA4FV788AJWLAmlPXLCRu35v7JJQT61sOtzQDsDlTc4wH0kuVqo4r0R
+        YJN04pVBsQVDnr9wH8awHr3y7l3CtT91JZfdFmgbb7xHooXt0vQTE48b6esnXU4W
+        vZg/WawcVzwAVZEUvivy6RO/L5nyHpg5eZSnYy3mV148INFxqxknAgMBAAGjYzBh
+        MA4GA1UdDwEB/wQEAwICpDAPBgNVHRMBAf8EBTADAQH/MB0GA1UdDgQWBBSNj4/B
+        4OGGsSNykEahaPsb/QDzdDAfBgNVHSMEGDAWgBSNj4/B4OGGsSNykEahaPsb/QDz
+        dDANBgkqhkiG9w0BAQsFAAOCAQEAJcvJYxZDHiE/uN2uik1cVjLNApjMeYhAvvAQ
+        c/1mgeqK6SB517oHNFiqJgtZvYAFBnbqYGeqTS4O0XcG6lqptXG6dhmnMZHce5xy
+        U3ArJ3PyP5COR4/KLiJTxAbd/Kjiyek8I/P7s8+e7h6s0BIUQKb/cYp2V8rFSlij
+        /MOtRdZrDPsJJODFEn/ZcW94OwBqSuzM3VlZa4qmsSEBduzJydmL609N3adaXIsR
+        GZ2kWqPfKAhNgSqShMzd+iBP595N/g7IFGf0FqbA2VfRDpf5UB1r6Xw1CniS9oic
+        QaX0+pey7BicF+VHNLl33f8iitfSMmTyvzE4dnGUn2Bq/HvxhA==
+        -----END CERTIFICATE-----
+  - kind: Secret
+    apiVersion: v1
+    type: Opaque
+    metadata:
+      name: ${NAME}-secret
+      labels:
+        app: ${NAME}
+    stringData: 
+      username: bob.ross 
+      password: '12345'
+
+parameters:
+  - name: NAME
+    value: simple-example
+
+
+
+
+
