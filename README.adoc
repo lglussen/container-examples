@@ -1,0 +1,109 @@
+
+
+## Building Images Exercises
+
+### Build image-one
+Build the Dockerfile under `image_one` using `buildah`
+```shell
+cd image_one
+buildah bud --layers -t image-one .
+```
+
+Take note of the `--> id` statements that print off after each step.
+Example:
+```
+STEP 10: RUN echo "file 5" > file_5.txt
+--> f1c0bcb1d15
+```
+NOTE: All files in the `build context` are loaded.
+      Performing a build in an area with a large number / or significantly large
+      Files (that are not required) will result in unnecessarily slow builds.
+
+Examine the images with `podman`
+```
+podman images
+```
+You should see the ubi image we based our build on and the `image-one` image
+we just built.
+```
+podman images --all
+podman inspect image-one
+```
+Adding `--all` should list un-tagged images as well.  Note that the IDs we saw
+earlier printing from the image build can be found in the "IMAGE ID" column.
+Also note the "Layers" from the inspect command output - you should see about
+as many layers as you do "IMAGE IDs" if you started with a clean podman
+environment.
+
+
+### Build image-two
+image-two will be based off of image-one, but we will perform some remediation
+to remove the "BAD" files from the image. Take a look at `image_two/Dockerfile`
+and see how we are removing the problematic material.
+
+Now lets build and tag image-two
+```
+cd image_two
+buildah bud -t image-two .
+```
+"Remove" image-one and confirm only image-two remains
+```
+podman image rm image-one
+podman images
+```
+
+Run image-two and inspect the filesystem
+```
+podman run -it image-two ls -l
+```
+We can see the file has been removed
+
+### Build image-three
+image-three will demonstrate 2 points:
+
+1. FROM may use image-ids OR repo/tags
+2. the "BAD" files still exist
+
+Modify the FROM in `image_three/Dockerfile` to use one of the last ids that
+printed during the build of `image-one` (alternately you could grab an
+"IMAGE ID" from `podman images --all` if this is a clean podman environment).
+
+Build the image and check for the "BAD" file
+```
+cd image_three
+buildah bud -t image-three .
+podman run -it image-three ls -la
+```
+
+### Run an image-id
+We don't need to build from a previous image-id to access the "BAD" file, we
+may simply run one of the intermediate images directly.
+
+Use the same image-id you put in the image-three dockerfile with the `podman run`
+command:
+```
+podman run -it <image-id> ls -l
+```
+
+### Build a long running application
+So far, our images don't actually run anything on their own. We have been
+supplying a command to the image (usually `ls -l` or `bash`) for the purpose of
+examining the file-system contents. For this application we will supply a
+default `CMD` command to our image - and one that won't complete (which would
+terminate the container).
+
+```
+cd date-watch
+buildah bud -t date-watch .
+podman run -it date-watch
+<Ctrl + C>
+podman run -d date-watch
+podman ps
+```
+
+# Key Takeaways
+- repository:tag and image-id are "Pointers" to layers / manifests.
+  Part of the registry, and do not "travel" with the image.
+- manifests are the interface to image layers
+- how layers work together
+- pedigree / metadata can be added to LABELS
