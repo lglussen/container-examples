@@ -1,2 +1,2 @@
 FROM image-one:latest
-RUN rm file_4_BAD_FILE.txt
+RUN rm BAD_FILE.txt
